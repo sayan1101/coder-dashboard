@@ -155,4 +155,27 @@ authController.get("/fetchHandles" ,async (req, res) => {
   }
 });
 
+authController.put("/updateProfile", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, bio, organization, country } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, bio, organization, country },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const { password, ...others } = updatedUser._doc;
+    res.status(200).json(others);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = authController;
