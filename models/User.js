@@ -14,6 +14,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  bio: { type: String, default: "" },
+  organization: { type: String, default: "" },
+  country: { type: String, default: "" }
 });
 
 module.exports = mongoose.model('User', UserSchema);
