@@ -53,13 +53,23 @@ const fetchLeetcodeContestRating = async (username) => {
     });
     const data = response.data;
 
-    if (!data.data || !data.data.userContestRanking) {
-      throw new Error("Failed to retrieve contest data");
+    if (!data.data || data.data.userContestRanking === null) {
+      // Return null values if userContestRanking is null
+      return {
+        contestsAttended: null,
+        contestRating: null,
+        globalRanking: null,
+        totalParticipants: null,
+        topPercentage: null,
+      };
     }
 
     return {
       contestsAttended: data.data.userContestRanking.attendedContestsCount,
       contestRating: data.data.userContestRanking.rating,
+      globalRanking: data.data.userContestRanking.globalRanking,
+      totalParticipants: data.data.userContestRanking.totalParticipants,
+      topPercentage: data.data.userContestRanking.topPercentage,
     };
   } catch (error) {
     console.error(
@@ -81,7 +91,7 @@ leetcodeController.get("/fetch-details", async (req, res) => {
     const leetcodeProblemsSolved = await fetchLeetcodeProblemsSolved(username);
     const leetcodeContestRating = await fetchLeetcodeContestRating(username);
 
-    if (!leetcodeProblemsSolved || !leetcodeContestRating) {
+    if (!leetcodeProblemsSolved || leetcodeContestRating === null) {
       return res.status(500).json({ message: "Failed to retrieve data" });
     }
 

@@ -9,15 +9,15 @@ const dotenv = require("dotenv");
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
-mongoose.set("strictQuery", false);
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => {
-    console.log("MONGODB has been started");
-  })
-  .catch((err) => {
-    console.error("Failed to connect to MongoDB", err);
-  });
+// mongoose.set("strictQuery", false);
+// mongoose
+//   .connect(process.env.MONGO_URL)
+//   .then(() => {
+//     console.log("MONGODB has been started");
+//   })
+//   .catch((err) => {
+//     console.error("Failed to connect to MongoDB", err);
+//   });
 app.use("/auth", authController);
 app.use("/leetcode", leetcodeController);
 app.use("/codeforces", codeforcesController);
