@@ -2,7 +2,7 @@ const authController = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const verifyToken = require("../middlewares/verifyToken");
 
 //register
 authController.post("/register", async (req, res) => {
@@ -45,6 +45,48 @@ authController.post("/login", async (req, res) => {
     return res.status(200).json({ others, token });
   } catch (error) {
     return res.status(500).json(error.message);
+  }
+});
+
+authController.post("/updateHandles", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { leetcode, codeforces, codechef } = req.body;
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    user.handles.leetcode = leetcode || user.handles.leetcode;
+    user.handles.codeforces = codeforces || user.handles.codeforces;
+    user.handles.codechef = codechef || user.handles.codechef;
+
+    await user.save();
+
+    const { password, ...others } = user._doc;
+    return res.status(200).json({ others });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+authController.get("/fetchHandles",verifyToken ,async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const { leetcode, codeforces, codechef } = user.handles;
+
+    return res.status(200).json({ leetcode, codeforces, codechef });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error.message });
   }
 });
 module.exports = authController;
