@@ -72,9 +72,9 @@ authController.post("/updateHandles", verifyToken, async (req, res) => {
   }
 });
 
-authController.get("/fetchHandles",verifyToken ,async (req, res) => {
+authController.get("/fetchHandles" ,async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.query.id;
 
     const user = await User.findById(userId);
     if (!user) {
