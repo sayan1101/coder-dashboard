@@ -158,11 +158,20 @@ authController.get("/fetchHandles" ,async (req, res) => {
 authController.put("/updateProfile", verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { name, bio, organization, country } = req.body;
+    const { name, bio, organization, country, leetcode, codeforces, codechef, hackerrank } = req.body;
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { name, bio, organization, country },
+      {
+        name,
+        bio,
+        organization,
+        country,
+        "platforms.leetcode": leetcode,
+        "platforms.codeforces": codeforces,
+        "platforms.codechef": codechef,
+        "platforms.hackerrank": hackerrank,
+      },
       { new: true }
     );
 
