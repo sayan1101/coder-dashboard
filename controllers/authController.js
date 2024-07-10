@@ -200,4 +200,28 @@ authController.post("/check-username", async (req, res) => {
   }
 });
 
+authController.get("/search-users", async (req, res) => {
+  try {
+    const { query } = req.query;
+ 
+    if (!query) {
+      return res.status(400).json({ error: "Query parameter is required" });
+    }
+    const escapedQuery = query.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+ 
+    const users = await User.find({
+      name: { $regex: escapedQuery, $options: "i" },
+    }).select("username name email");
+ 
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+ 
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Error in search-users endpoint:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = authController;
