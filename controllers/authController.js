@@ -224,4 +224,22 @@ authController.get("/search-users", async (req, res) => {
   }
 });
 
+authController.get("/user/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error in /user/:id endpoint:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+
 module.exports = authController;
