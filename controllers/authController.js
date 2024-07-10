@@ -158,20 +158,24 @@ authController.get("/fetchHandles" ,async (req, res) => {
 authController.put("/updateProfile", verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { name, bio, organization, country, leetcode, codeforces, codechef, hackerrank } = req.body;
+    const { name, bio, organization, country, platforms } = req.body;
+
+    const updateData = {
+      name,
+      bio,
+      organization,
+      country,
+    };
+
+    if (platforms) {
+      updateData["platforms.leetcode"] = platforms.leetcode;
+      updateData["platforms.codeforces"] = platforms.codeforces;
+      updateData["platforms.codechef"] = platforms.codechef;
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      {
-        name,
-        bio,
-        organization,
-        country,
-        "platforms.leetcode": leetcode,
-        "platforms.codeforces": codeforces,
-        "platforms.codechef": codechef,
-        "platforms.hackerrank": hackerrank,
-      },
+      { $set: updateData },
       { new: true }
     );
 
@@ -186,6 +190,7 @@ authController.put("/updateProfile", verifyToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 authController.post("/check-username", async (req, res) => {
   try {
